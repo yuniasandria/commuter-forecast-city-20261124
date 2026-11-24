@@ -14,11 +14,16 @@ LINE = (
 )
 
 
+def _strip_controls(line: str) -> str:
+    """Remove control characters (keeping tab) so none can leak into entry.txt."""
+    return "".join(ch for ch in line if ch == "\t" or ord(ch) >= 0x20)
+
+
 def main() -> int:
     out_dir = os.environ.get("OUTPUT_DIR", "/output")
     os.makedirs(out_dir, exist_ok=True)
     path = os.path.join(out_dir, "entry.txt")
-    data = LINE.encode("utf-8")
+    data = _strip_controls(LINE).encode("utf-8")
     with open(path, "wb") as f:
         f.write(data)
     return 0
